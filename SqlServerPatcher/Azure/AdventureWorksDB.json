@@ -2,130 +2,72 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "servers_db_devserver01_name": {
-      "defaultValue": "db-devserver01",
-      "type": "String"
+    "dbServerName": {
+      "type": "string",
+      "defaultValue": "db-devserver01"
     },
-    "databases_db_model01_name": {
-      "defaultValue": "db-devserver01/db-model01",
-      "type": "String"
+    "dbDatabaseName": {
+      "type": "string",
+      "defaultValue": "db-model01"
     },
-    "databases_master_name": {
-      "defaultValue": "db-devserver01/master",
-      "type": "String"
+    "DatabaseServerAdminLogin": {
+      "type": "string",
+      "defaultValue": "AdminUser"
     },
-    "firewallRules_AllowAllWindowsAzureIps_name": {
-      "defaultValue": "db-devserver01/AllowAllWindowsAzureIps",
-      "type": "String"
-    },
-    "firewallRules_rule1_name": {
-      "defaultValue": "db-devserver01/rule1",
-      "type": "String"
+    "DatabaseServerAdminLoginPassword": {
+      "type": "securestring"
     }
   },
   "variables": { },
   "resources": [
     {
       "comments": "",
+      "name": "[parameters('dbServerName')]",
       "type": "Microsoft.Sql/servers",
       "kind": "v12.0",
-      "name": "[parameters('servers_db_devserver01_name')]",
+      "location": "[resourceGroup().location]",
       "apiVersion": "2014-04-01-preview",
-      "location": "Central US",
+      "tags": {
+        "displayName": "Database Server"
+      },
       "properties": {
-        "administratorLogin": "db-dev-admin01",
-        "administratorLoginPassword": null,
+        "administratorLogin": "[parameters('DatabaseServerAdminLogin')]",
+        "administratorLoginPassword": "[parameters('DatabaseServerAdminLoginPassword')]",
         "version": "12.0"
       },
-      "resources": [ ],
-      "dependsOn": [ ]
-    },
-    {
-      "comments": "",
-      "type": "Microsoft.Sql/servers/databases",
-      "kind": "v12.0,user",
-      "name": "[parameters('databases_db_model01_name')]",
-      "apiVersion": "2014-04-01-preview",
-      "location": "Central US",
-      "properties": {
-        "databaseId": "457cbd63-cd0a-40d5-96f2-adfc4129f5f6",
-        "edition": "Basic",
-        "status": "Online",
-        "serviceLevelObjective": "Basic",
-        "collation": "SQL_Latin1_General_CP1_CI_AS",
-        "maxSizeBytes": "2147483648",
-        "creationDate": "2016-12-25T02:30:51.497Z",
-        "currentServiceObjectiveId": "dd6d99bb-f193-4ec1-86f2-43d3bccbc49c",
-        "requestedServiceObjectiveId": "dd6d99bb-f193-4ec1-86f2-43d3bccbc49c",
-        "requestedServiceObjectiveName": "Basic",
-        "sampleName": null,
-        "defaultSecondaryLocation": "East US 2",
-        "earliestRestoreDate": "2016-12-25T02:41:27.88Z",
-        "elasticPoolName": null,
-        "containmentState": 2,
-        "readScale": "Disabled"
-      },
-      "resources": [ ],
-      "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers', parameters('servers_db_devserver01_name'))]"
-      ]
-    },
-    {
-      "comments": "",
-      "type": "Microsoft.Sql/servers/databases",
-      "kind": "v12.0,system",
-      "name": "[parameters('databases_master_name')]",
-      "apiVersion": "2014-04-01-preview",
-      "location": "Central US",
-      "properties": {
-        "databaseId": "82d75c3d-d8ce-4cc3-a3ea-7e6f9c9a6a8f",
-        "edition": "Basic",
-        "status": "Online",
-        "serviceLevelObjective": "Basic",
-        "collation": "SQL_Latin1_General_CP1_CI_AS",
-        "maxSizeBytes": "2147483648",
-        "creationDate": "2016-12-25T02:30:11.853Z",
-        "currentServiceObjectiveId": "dd6d99bb-f193-4ec1-86f2-43d3bccbc49c",
-        "requestedServiceObjectiveId": "dd6d99bb-f193-4ec1-86f2-43d3bccbc49c",
-        "requestedServiceObjectiveName": "Basic",
-        "sampleName": null,
-        "defaultSecondaryLocation": "East US 2",
-        "earliestRestoreDate": null,
-        "elasticPoolName": null,
-        "containmentState": 2,
-        "readScale": "Disabled"
-      },
-      "resources": [ ],
-      "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers', parameters('servers_db_devserver01_name'))]"
-      ]
-    },
-    {
-      "comments": "",
-      "type": "Microsoft.Sql/servers/firewallRules",
-      "kind": "v12.0",
-      "name": "[parameters('firewallRules_AllowAllWindowsAzureIps_name')]",
-      "apiVersion": "2014-04-01-preview",
-      "location": "Central US",
-      "properties": {
-        "startIpAddress": "0.0.0.0",
-        "endIpAddress": "0.0.0.0"
-      },
-      "resources": [ ],
-      "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers', parameters('servers_db_devserver01_name'))]"
-      ]
-    },
-    {
-      "comments": "",
-      "type": "Microsoft.Sql/servers/firewallRules",
-      "kind": "v12.0",
-      "name": "[parameters('firewallRules_rule1_name')]",
-      "apiVersion": "2014-04-01-preview",
-      "location": "Central US",
-      "resources": [ ],
-      "dependsOn": [
-        "[resourceId('Microsoft.Sql/servers', parameters('servers_db_devserver01_name'))]"
+      "resources": [
+        {
+          "comments": "",
+          "name": "[concat('AllowAllIps', parameters('dbServerName'))]",
+          "type": "firewallrules",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('dbServerName'))]"
+          ],
+          "properties": {
+            "startIpAddress": "0.0.0.0",
+            "endIpAddress": "0.0.0.0"
+          }
+        },
+        {
+          "comments": "",
+          "name": "[parameters('dbDatabaseName')]",
+          "type": "databases",
+          "location": "[resourceGroup().location]",
+          "apiVersion": "2014-04-01-preview",
+          "dependsOn": [
+            "[resourceId('Microsoft.Sql/servers', parameters('dbServerName'))]"
+          ],
+          "tags": {
+            "displayName": "Primary Database"
+          },
+          "properties": {
+            "collation": "SQL_Latin1_General_CP1_CI_AS",
+            "edition": "Basic",
+            "maxSizeBytes": "1073741824"
+          }
+        }
       ]
     }
   ]

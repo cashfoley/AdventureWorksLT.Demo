@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "dbServerName": { "value": "debug-dbserver01" },
+    "dbDatabaseName": { "value": "db-model01" },
+    "DatabaseServerAdminLogin": { "value": "db-dev-admin01" },
+    "DatabaseServerAdminLoginPassword": {"value": "5upp3r53(re7"}
+  }
+}
