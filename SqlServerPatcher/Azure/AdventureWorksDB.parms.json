@@ -5,6 +5,6 @@
     "dbServerName": { "value": "debug-dbserver01" },
     "dbDatabaseName": { "value": "db-model01" },
     "DatabaseServerAdminLogin": { "value": "db-dev-admin01" },
-    "DatabaseServerAdminLoginPassword": {"value": "5upp3r53(re7"}
+    "DatabaseServerAdminLoginPassword": { "value": "5upp3r53(re7" }
   }
 }

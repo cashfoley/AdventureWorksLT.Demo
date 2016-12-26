@@ -107,5 +107,6 @@
   <ItemGroup>
     <None Include="SqlServerPatcher\Azure\Deploy-AzureResourceGroup.ps1" />
     <None Include="SqlServerPatcher\Azure\AdventureWorksDB.json" />
+    <None Include="SqlServerPatcher\Azure\AdventureWorksDB.parms.json" />
   </ItemGroup>
 </Project>
