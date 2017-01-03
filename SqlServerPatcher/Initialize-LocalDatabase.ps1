@@ -38,11 +38,6 @@ PRINT N'Created DATABASE ''{0}''.'
 "@
 
 
-$CreateUserScript = @"
-CREATE USER [{0}] WITHOUT LOGIN WITH DEFAULT_SCHEMA=[dbo]
-PRINT N'Created LOGIN ''{0}''.'
-"@
-
 $AddRoleScript = 'ALTER AUTHORIZATION ON SCHEMA::[{1}] TO [{0}]'
 
 $CreateUserScript = @"
@@ -54,17 +49,6 @@ BEGIN
 END;
 ELSE
 	PRINT N'User ''{0}'' alread exists.'
-"@
-
-$CreateLoginScript = @"
-If not Exists (select * from master.dbo.syslogins where name = '{0}')
-BEGIN
-	CREATE LOGIN {0}   
-	   WITH PASSWORD = 'Baz1nga'
-	PRINT N'Created User ''{0}''.'
-END 
-ELSE
-	PRINT N'Login ''{0}'' alread exists.'
 "@
 
 try
