@@ -20,7 +20,7 @@ Import-Module $SqlServerPatcherModule -Force
     Get-ChildItem -recurse -Filter *.sql | Add-SqlDbPatches 
 }
 
-$ConnectionString = 'Data Source={0}; Initial Catalog={1};User id={2}; Password={3};MultipleActiveResultSets=False;Application Name="SQL Management"' 
+$ConnectionString = 'Data Source={0}; Initial Catalog={1};User id={2}; Password={3};Application Name="SqlServerPatcher"' 
 
 $SqlServerPatcherParms = @{
     ConnectionString = ConvertTo-SecureString ($ConnectionString -f $ServerName,$DatabaseName,$DboAdmin,$AdminPassword) -AsPlainText -Force 
@@ -32,4 +32,20 @@ $SqlServerPatcherParms = @{
 }
 
 Initialize-SqlServerPatcher @SqlServerPatcherParms 
+
+Get-SqlServerPatchInfo
+# ShowPatchInfo is alias
+
+Publish-SqlServerPatches 
+<#
+
+ShowPatchHistory
+
+ShowDbObjects -all
+
+RollbackPatch 2
+
+ShowPatchInfo -PatchesToExecute | Test-SqlServerRollback
+#>
+
 
