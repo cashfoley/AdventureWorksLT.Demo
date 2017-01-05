@@ -40,6 +40,17 @@ PRINT N'Created DATABASE ''{0}''.'
 
 $AddRoleScript = 'ALTER AUTHORIZATION ON SCHEMA::[{1}] TO [{0}]'
 
+$CreateLoginScript = @'
+If not Exists (select * from master.dbo.syslogins where name = '{0}')
+BEGIN
+	CREATE LOGIN {0}   
+	   WITH PASSWORD = '{1}'
+	PRINT N'Created User ''{0}''.'
+END 
+ELSE
+	PRINT N'Login ''{0}'' alread exists.'
+'@
+
 $CreateUserScript = @"
 IF NOT EXISTS (SELECT * FROM sys.database_principals WHERE name = N'{0}')
 BEGIN
@@ -65,11 +76,11 @@ try
     $SqlCmd = $Connection.CreateCommand()
     $SqlCmd.CommandType = [System.Data.CommandType]::Text
 
-    Execute-NonQuery $SqlCmd ($DeleteDatabaseScript -f $DatabaseName)
-    Execute-NonQuery $SqlCmd ($CreateDatabaseScript -f $DatabaseName)
-    Execute-NonQuery $SqlCmd ($CreateLoginScript -f $DboAdmin)
+    Execute-NonQuery -cmd $SqlCmd -script ($DeleteDatabaseScript -f $DatabaseName)
+    Execute-NonQuery -cmd $SqlCmd -script ($CreateDatabaseScript -f $DatabaseName)
+    Execute-NonQuery -cmd $SqlCmd -script ($CreateLoginScript -f $DboAdmin,$AdminPassword)
     $Connection.ChangeDatabase($DatabaseName)
-    Execute-NonQuery $SqlCmd ($CreateUserScript -f $DboAdmin)
+    Execute-NonQuery -cmd $SqlCmd -script ($CreateUserScript -f $DboAdmin)
     #Execute-NonQuery $SqlCmd ($AddRoleScript -f $DboAdmin, 'db_owner')
 
     $Connection
